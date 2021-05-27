@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { Row, Col, Button, ButtonGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { postActions } from '../../redux/actions'
 
 import "./style.css";
 
@@ -45,9 +47,11 @@ const SidebarButton = ({ title, icon }) => {
 
 /* STEP 3 */
 export default function HomePage() {
+  const dispatch = useDispatch()
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  
+
   useEffect(() => {
+    dispatch(postActions.postsRequest())
   }, []);
 
   if (!isAuthenticated) return <Redirect to="/auth" />;

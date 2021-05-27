@@ -50,12 +50,13 @@ postController.destroy = catchAsync(async (req, res) => {
   });
 });
 
-postController.list = catchAsync(async (req, res) => {
+postController.getHomePagePosts = catchAsync(async (req, res) => {
+  const posts = await Post.find({})
   return sendResponse(
     res,
     200,
     true,
-    { posts: [{ foo: "bar" }] },
+    { posts },
     null,
     "Login successful"
   );

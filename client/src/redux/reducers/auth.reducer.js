@@ -25,9 +25,11 @@ const authReducer = (state = initialState, action) => {
       return { ...state, loading: true };
 
     case types.REGISTER_SUCCESS:
+      localStorage.setItem("accessToken", payload.accessToken)
       return {
         ...state,
         loading: false,
+        isAuthenticated: true
       };
 
     case types.LOGIN_SUCCESS:

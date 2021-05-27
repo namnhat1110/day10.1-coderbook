@@ -46,13 +46,13 @@ const loginGoogleRequest = (access_token) => async (dispatch) => {
     dispatch({ type: types.LOGIN_GOOGLE_FAILURE, payload: error });
   }
 };
-const register = (name, email, password, avatarUrl) => async (dispatch) => {
+const register = (user) => async (dispatch) => {
   dispatch({ type: types.REGISTER_REQUEST, payload: null });
   try {
-    const res = await api.post("/users", { name, email, password, avatarUrl });
+    const res = await api.post("/users", user);
     dispatch({ type: types.REGISTER_SUCCESS, payload: res.data.data });
     dispatch(routeActions.redirect("/auth"));
-    toast.success(`Thank you for your registration, ${name}!`);
+    toast.success(`Thank you for your registration, ${user.name}!`);
   } catch (error) {
     dispatch({ type: types.REGISTER_FAILURE, payload: error });
   }

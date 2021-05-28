@@ -1,10 +1,12 @@
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 
 const {
   AppError,
   catchAsync,
   sendResponse,
 } = require("../helpers/utils.helper");
+const { post } = require("../api/posts.api");
 
 const postController = {};
 
@@ -51,14 +53,51 @@ postController.destroy = catchAsync(async (req, res) => {
 });
 
 postController.getHomePagePosts = catchAsync(async (req, res) => {
-  const posts = await Post.find({})
+  const posts = await Post.find({}).sort({ "id": -1 })
   return sendResponse(
     res,
     200,
     true,
     { posts },
     null,
-    "Login successful"
+    "Get homepage posts successful"
+  );
+});
+
+postController.getUserPosts = catchAsync(async (req, res) => {
+
+  const posts = await Post.find({ owner: req.userId })
+    .populate('owner')
+    .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'owner',
+      },
+    })
+
+  return sendResponse(res, 200, true, { posts }, null, 'Received posts');
+});
+
+
+postController.createComment = catchAsync(async (req, res) => {
+  const comment = await Comment.create({ owner: req.userId, ...req.body, post: req.params.id })
+  const post = await Post.findById(req.params.id)
+  await post.comments.unshift(comment._id)
+  await post.save()
+  await post.populate({
+    path: 'comments', populate: {
+      path: 'owner',
+    }
+  }).execPopulate()
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { post },
+    null,
+    "Create comment successful"
   );
 });
 

@@ -49,10 +49,12 @@ const SidebarButton = ({ title, icon }) => {
 export default function HomePage() {
   const dispatch = useDispatch()
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const posts = useSelector((state) => state.post.posts)
 
   useEffect(() => {
     dispatch(postActions.postsRequest())
-  }, []);
+  }, [])
+
 
   if (!isAuthenticated) return <Redirect to="/auth" />;
 
@@ -71,10 +73,10 @@ export default function HomePage() {
         className="d-flex flex-column align-items-center posts-container"
       >
         <Composer />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
+        {posts?.map(p => {
+          return <Post post={p} />
+        })}
+
       </Col>
       <Col></Col>
     </Row>

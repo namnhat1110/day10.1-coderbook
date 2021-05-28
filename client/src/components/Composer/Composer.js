@@ -27,8 +27,8 @@ export default function Composer() {
   const onSubmit = (e) => {
     e.preventDefault()
     dispatch(postActions.createPost(body))
+    setBody('')
   }
-  console.log({ body })
 
 
   return (

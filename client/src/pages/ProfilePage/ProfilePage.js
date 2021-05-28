@@ -1,12 +1,25 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { Row, Col, Nav, Button, Container, ButtonGroup } from "react-bootstrap";
 
 import "./style.css";
-
+import { postActions } from '../../redux/actions';
+import Post from '../../components/Post/Post';
 import Composer from "../../components/Composer/Composer";
 
 export default function ProfilePage() {
+
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const posts = useSelector((state) => state.post.posts);
+
+  const email = user.email;
+
+
+  useEffect(() => {
+    dispatch(postActions.getUserPost(email));
+  }, [dispatch]);
+
   return (
     <div>
       <Row className="centered hero">
@@ -89,33 +102,10 @@ export default function ProfilePage() {
           </Col>
           <Col xs={7} className="posts-col">
             <Composer />
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
-            <h1>Post</h1>
+            {posts?.map((p) => {
+              return <Post post={p} />
+            })}
+
           </Col>
         </Container>
       </Row>

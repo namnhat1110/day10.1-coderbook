@@ -70,7 +70,7 @@ const createPost = (body, images) => async (dispatch) => {
     const res = await api.post("/posts", { body, images });
 
     dispatch({
-      payload: res.data.data,
+      payload: res.data,
       type: types.CREATE_POST_SUCCESS,
     });
 
@@ -136,9 +136,45 @@ const createPostReaction = (targetType, targetId, emoji) => async (dispatch) => 
   }
 };
 
+const getUserPost =
+  (
+    pageNum = 1,
+    limit = 20,
+    query = null,
+    ownerId = null,
+    sortBy = null,
+    email
+  ) =>
+    async (dispatch) => {
+      dispatch({ type: types.GET_USER_POSTS, payload: null });
+      try {
+        let queryString = '';
+        if (query) {
+          queryString = `&title[$regex]=${query}&title[$options]=i`;
+        }
+        if (ownerId) {
+          queryString = `${queryString}&author=${ownerId}`;
+        }
+        let sortByString = '';
+        if (sortBy?.key) {
+          sortByString = `&sortBy[${sortBy.key}]=${sortBy.ascending}`;
+        }
+        const res = await api.get(
+          `/posts/${email}?page=${pageNum}&limit=${limit}${queryString}${sortByString}`
+        );
+        dispatch({
+          type: types.GET_USER_POSTS_SUCCESS,
+          payload: res.data.data,
+        });
+      } catch (error) {
+        dispatch({ type: types.GET_USER_POSTS_FAILURE, payload: error });
+      }
+    };
+
 export const postActions = {
   postsRequest,
   getSinglePost,
+  getUserPost,
   createReview,
   createPost,
   updatePost,

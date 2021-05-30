@@ -1,4 +1,6 @@
 import * as types from "../constants/post.constants";
+import * as cTypes from "../constants/comment.constants";
+import * as rTypes from "../constants/reaction.constants";
 
 const initialState = {
   posts: [],
@@ -15,6 +17,16 @@ const postReducer = (state = initialState, action) => {
     case types.UPDATE_POST_REQUEST:
     case types.DELETE_POST_REQUEST:
     case types.GET_SINGLE_POST_REQUEST:
+      return { ...state, loading: true };
+
+    case cTypes.UPDATE_COMMENT_REQUEST:
+    case cTypes.DELETE_COMMENT_REQUEST:
+    case cTypes.CREATE_COMMENT_REQUEST:
+      return { ...state, loading: true };
+
+    case rTypes.UPDATE_REACTION_REQUEST:
+    case rTypes.DELETE_REACTION_REQUEST:
+    case rTypes.CREATE_REACTION_REQUEST:
       return { ...state, loading: true };
 
     case types.POST_REQUEST_SUCCESS:
@@ -35,6 +47,32 @@ const postReducer = (state = initialState, action) => {
         selectedBlog: payload,
       };
 
+    case cTypes.UPDATE_COMMENT_SUCCESS:
+      const idw = state.posts.findIndex((p) => p._id === payload.post);
+      const newidw = state.posts[idw].comments.findIndex(
+        (comment) => comment._id === payload._id
+      );
+      state.posts[idw].comments[newidw] = payload;
+      return {
+        ...state,
+        submitLoading: false,
+        posts: [...state.posts],
+      };
+
+    case rTypes.UPDATE_REACTION_SUCCESS:
+      const idy = state.posts.findIndex(
+        (p) => p._id === payload.reactionableId
+      );
+      const newidy = state.posts[idy].reactions.findIndex(
+        (reaction) => reaction._id === payload._id
+      );
+      state.posts[idy].reactions[newidy] = payload;
+      return {
+        ...state,
+        submitLoading: false,
+        posts: [...state.posts],
+      };
+
     case types.CREATE_POST_FAILURE:
     case types.UPDATE_POST_FAILURE:
     case types.DELETE_POST_FAILURE:
@@ -42,20 +80,63 @@ const postReducer = (state = initialState, action) => {
     case types.GET_SINGLE_POST_REQUEST_FAILURE:
       return { ...state, loading: false };
 
+    case cTypes.UPDATE_COMMENT_FAILURE:
+    case cTypes.DELETE_COMMENT_FAILURE:
+    case cTypes.CREATE_COMMENT_FAILURE:
+      return { ...state, loading: false };
+
+    case rTypes.UPDATE_REACTION_FAILURE:
+    case rTypes.DELETE_REACTION_FAILURE:
+    case rTypes.CREATE_REACTION_FAILURE:
+      return { ...state, loading: false };
+
+
+
     case types.CREATE_POST_SUCCESS:
       const newPosts = [payload, ...state.posts]
       console.log({ newPosts })
       return {
         ...state,
         posts: newPosts,
-        loading: false,
+        submitLoading: false,
       };
 
     case types.DELETE_POST_SUCCESS:
+      state.posts = state.posts.filter((p) => p._id !== payload._id);
       return {
         ...state,
-        loading: false,
+        submitLoading: false,
         selectedBlog: {},
+        posts: [...state.posts]
+      };
+
+    case cTypes.DELETE_COMMENT_SUCCESS:
+      const idu = state.posts.findIndex((p) => p._id === payload.post);
+      state.posts[idu].comments = state.posts[idu].comments.filter(
+        (comment) => comment._id !== payload._id
+      );
+
+      return {
+        ...state,
+        submitLoading: true,
+        posts: [...state.posts],
+      };
+
+    case rTypes.DELETE_REACTION_SUCCESS:
+      const postIdx = state.posts.findIndex(
+        (p) => p._id === payload.reactionableId
+      );
+
+      let reactionIdx = state.posts[postIdx].reactions.findIndex(
+        (reaction) => reaction._id === payload._id
+      );
+
+      state.posts[postIdx].reactions.splice(reactionIdx, 1);
+
+      return {
+        ...state,
+        loading: true,
+        posts: [...state.posts],
       };
 
     case types.GET_USER_POSTS_SUCCESS:
@@ -65,7 +146,7 @@ const postReducer = (state = initialState, action) => {
     case types.CREATE_REVIEW_REQUEST:
       return { ...state, submitLoading: true };
 
-    case types.CREATE_COMMENT_SUCCESS:
+    case cTypes.CREATE_COMMENT_SUCCESS:
       const idx = state.posts.findIndex((p) => p._id === payload._id)
       console.log({ idx, hi: state.posts })
       state.posts[idx] = payload
@@ -74,6 +155,16 @@ const postReducer = (state = initialState, action) => {
         ...state,
         posts: [...state.posts],
         submitLoading: false,
+      };
+
+    case rTypes.CREATE_REACTION_SUCCESS:
+      const idz = state.posts.findIndex((p) => p._id === payload._id)
+      state.posts[idz] = payload;
+
+      return {
+        ...state,
+        posts: [...state.posts],
+        submitLoading: false
       };
 
     case types.CREATE_REVIEW_SUCCESS:

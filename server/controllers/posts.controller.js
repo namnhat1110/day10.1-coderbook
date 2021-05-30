@@ -53,7 +53,21 @@ postController.destroy = catchAsync(async (req, res) => {
 });
 
 postController.getHomePagePosts = catchAsync(async (req, res) => {
-  const posts = await Post.find({}).sort({ "id": -1 })
+  const posts = await Post.find({}).sort({ _id: -1 })
+    .populate('owner')
+    .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'owner',
+      },
+    })
+    .populate({
+      path: 'reactions',
+      populate: {
+        path: 'owner',
+      },
+    })
   return sendResponse(
     res,
     200,

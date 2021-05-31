@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 
 import avatar from "../../assets/avatar.jpg";
 
-import { commentActions, postActions, reactionActions } from "../../redux/actions";
+import { commentActions, reactionActions } from "../../redux/actions";
 
 import "./style.css";
 
@@ -29,7 +29,7 @@ const CommentForm = ({ postId }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(commentActions.create(body, postId));
+    dispatch(commentActions.createComment(body, postId));
 
     setBody("");
   };

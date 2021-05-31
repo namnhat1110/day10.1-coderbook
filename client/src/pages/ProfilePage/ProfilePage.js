@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Row, Col, Nav, Button, Container, ButtonGroup } from "react-bootstrap";
 
@@ -11,9 +11,12 @@ export default function ProfilePage() {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  console.log({ user })
   const posts = useSelector((state) => state.post.posts);
-
+  console.log({ posts })
+  const [postId, setPostId] = useState('');
   const email = user.email;
+  console.log({ email })
 
 
   useEffect(() => {
@@ -35,6 +38,9 @@ export default function ProfilePage() {
               className="position-absolute rounded-circle cover-profile-photo"
               src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
             />
+          </div>
+          <div className="mt-5 centered position-relative" >
+            <h4>{user.firstName} {user.lastName}</h4>
           </div>
         </Container>
         <hr className="w-75" />
@@ -101,14 +107,17 @@ export default function ProfilePage() {
             <h1>Sidebar</h1>
           </Col>
           <Col xs={7} className="posts-col">
-            <Composer />
+            <Composer postId={postId} />
             {posts?.map((p) => {
-              return <Post post={p} />
+              return (
+                <Post
+                  post={p}
+                  setPostId={setPostId} />)
             })}
 
           </Col>
         </Container>
       </Row>
-    </div>
+    </div >
   );
 }

@@ -36,7 +36,18 @@ authController.hi = catchAsync(async (req, res, next) => {
     null,
     "Hi production database"
   )
-}
-)
+});
+
+authController.testDB = catchAsync(async (req, res, next) => {
+  const users = await User.find({})
+  return sendResponse(
+    res,
+    200,
+    true,
+    { message: 'hi', users },
+    null,
+    "Hi production database"
+  )
+});
 
 module.exports = authController;

@@ -117,6 +117,7 @@ const PostActions = ({ post }) => {
   return (
     <ButtonGroup aria-label="Basic example">
       {POST_ACTIONS.map((a) => {
+        console.log({ a })
         return (
           <PostActionButton
             key={a.title}

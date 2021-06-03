@@ -39,7 +39,7 @@ export default function ProfilePage() {
               src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
             />
           </div>
-          <div className="mt-5 centered position-relative" >
+          <div className="centered position-relative" >
             <h4>{user.firstName} {user.lastName}</h4>
           </div>
         </Container>

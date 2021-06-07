@@ -18,6 +18,8 @@ import "./style.css";
 import { authActions } from "../../redux/actions";
 
 import Footer from "../../components/Footer";
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from 'react-google-login';
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
@@ -25,6 +27,9 @@ export default function RegisterPage() {
 
   const [user, setUser] = useState({ email: "", password: "" });
   const [show, setShow] = useState(false);
+
+  const FB_APP_ID = process.env.REACT_APP_FB_APP_ID;
+  const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
   const onToggleModal = (e) => {
     e.preventDefault();
@@ -44,6 +49,15 @@ export default function RegisterPage() {
     e.preventDefault()
     dispatch(authActions.register(user))
   }
+
+  const loginWithFacebook = (response) => {
+    dispatch(authActions.loginFacebookRequest(response.accessToken));
+  };
+
+  const loginWithGoogle = (response) => {
+    console.log(response);
+    dispatch(authActions.loginGoogleRequest(response.accessToken));
+  };
 
   console.log({ isAuthenticated })
   if (isAuthenticated) return <Redirect to="/" />;
@@ -100,6 +114,43 @@ export default function RegisterPage() {
                     Forgot Password?
                   </Link>
                 </Form.Group>
+                <FacebookLogin
+                  appId={FB_APP_ID}
+                  fields="name,email,picture"
+                  callback={loginWithFacebook}
+                  icon="fa-facebook"
+                  onFailure={(err) => {
+                    console.log("FB LOGIN ERROR:", err);
+                  }}
+                  containerStyle={{
+                    textAlign: "center",
+                    backgroundColor: "#3b5998",
+                    borderColor: "#3b5998",
+                    flex: 1,
+                    display: "flex",
+                    color: "#fff",
+                    cursor: "pointer",
+                    marginBottom: "3px",
+                  }}
+                  buttonStyle={{
+                    flex: 1,
+                    textTransform: "none",
+                    padding: "12px",
+                    background: "none",
+                    border: "none",
+                  }}
+                />
+
+                <GoogleLogin
+                  className="google-btn d-flex justify-content-center"
+                  clientId={GOOGLE_CLIENT_ID}
+                  buttonText="Login with Google"
+                  onSuccess={loginWithGoogle}
+                  onFailure={(err) => {
+                    console.log("GOOGLE LOGIN ERROR:", err);
+                  }}
+                  cookiePolicy="single_host_origin"
+                />
                 <hr className="hr" />
                 <Button
                   type="submit"

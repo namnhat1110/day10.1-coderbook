@@ -16,7 +16,7 @@ authController.loginWithEmail = catchAsync(async (req, res, next) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return next(new AppError(400, "Wrong password", "Login Error"));
 
-  accessToken = await user.generateToken();
+  const accessToken = await user.generateToken();
   return sendResponse(
     res,
     200,
@@ -26,6 +26,30 @@ authController.loginWithEmail = catchAsync(async (req, res, next) => {
     "Login successful"
   );
 });
+
+authController.loginWithFacebookOrGoogle = async ({ user }, res) => {
+  if (user) {
+    user = await User.findByIdAndUpdate(
+      user._id,
+      { avatarUrl: user.avatarUrl },
+      { new: true }
+    );
+  } else {
+    let newPassword = "" + Math.floor(Math.random() * 100000000);
+    const salt = await bcrypt.genSalt(10);
+    newPassword = await bcrypt.hash(newPassword, salt);
+
+    user = await User.create({
+      name: user.name,
+      email: user.email,
+      password: newPassword,
+      avatarUrl: user.avatarUrl,
+    });
+  }
+
+  const accessToken = await user.generateToken();
+  res.status(200).json({ status: 'success', data: { user, accessToken } });
+};
 
 authController.hi = catchAsync(async (req, res, next) => {
   return sendResponse(

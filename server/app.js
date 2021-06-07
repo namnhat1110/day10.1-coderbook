@@ -7,7 +7,8 @@ require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const MONGODB_URI = process.env.MONGODB_URI;
-
+const passport = require('passport');
+require("./middlewares/passport");
 const indexRouter = require('./api/index');
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+app.use(passport.initialize());
 
 mongoose
   .connect(MONGODB_URI, {

@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import avatar from "../../assets/avatar.jpg";
 
@@ -86,17 +86,25 @@ const PostComments = (props) => {
   );
 };
 
+const POST_REACTIONS = [
+  { title: "Heart", icon: "heart" },
+  { title: "Angry", icon: "angry" },
+  { title: "Crying", icon: "sad-cry" },
+];
+
 const POST_ACTIONS = [
   { title: "Like", icon: "thumbs-up" },
-  { title: "Heart", icon: "comment" },
-  { title: "Wow", icon: "share" },
+  { title: "Comment", icon: "comment" },
+  { title: "Share", icon: "share" },
 ];
 
 const PostActionButton = ({ title, icon, postId, post }) => {
   const dispatch = useDispatch();
 
   const onClick = () => {
-    dispatch(reactionActions.createReaction(postId, title, "Post"));
+    if (title === "Like" || "Heart" || "Angry" || "Crying") {
+      dispatch(reactionActions.createReaction(postId, title, "Post"))
+    }
   };
 
   return (
@@ -116,6 +124,17 @@ const PostActionButton = ({ title, icon, postId, post }) => {
 const PostActions = ({ post }) => {
   return (
     <ButtonGroup aria-label="Basic example">
+      {POST_REACTIONS.map((a) => {
+        console.log({ a })
+        return (
+          <PostActionButton
+            key={a.title}
+            {...a}
+            postId={post._id}
+            post={post}
+          />
+        );
+      })}
       {POST_ACTIONS.map((a) => {
         console.log({ a })
         return (
@@ -128,6 +147,7 @@ const PostActions = ({ post }) => {
         );
       })}
     </ButtonGroup>
+
   );
 };
 
@@ -135,7 +155,10 @@ const PostReactions = ({ post }) => {
   return (
     <div className="d-flex justify-content-between my-2 mx-3">
       <p className="mb-0">{post.reactions.length}</p>
-      <p className="mb-0">{post.comments.length} comments</p>
+      <p className="mb-0">
+        {post.comments.length === 0 ? "" : post.comments.length}{" "}
+        {post.comments.length < 2 ? "Comment" : "Comments"}
+      </p>
     </div>
   );
 };

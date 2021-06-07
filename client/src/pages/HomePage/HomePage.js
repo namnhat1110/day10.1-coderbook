@@ -74,7 +74,9 @@ export default function HomePage() {
       >
         <Composer />
         {posts?.map(p => {
-          return <Post post={p} />
+          return (
+            <Post post={p} />
+          )
         })}
 
       </Col>
